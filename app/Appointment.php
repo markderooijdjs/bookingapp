@@ -19,7 +19,7 @@ class Appointment extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['start_time', 'finish_time', 'comments', 'client_id', 'employee_id'];
+    protected $fillable = ['start_time', 'finish_time', 'comments', 'client_id'];
     
 
     /**
@@ -105,10 +105,10 @@ class Appointment extends Model
         return $this->belongsTo(Client::class, 'client_id')->withTrashed();
     }
     
-    public function employee()
-    {
-        return $this->belongsTo(Employee::class, 'employee_id')->withTrashed();
-    }
+   // public function employee()
+    //{
+     //   return $this->belongsTo(Employee::class, 'employee_id')->withTrashed();
+    //}
 	
     public function service()
     {

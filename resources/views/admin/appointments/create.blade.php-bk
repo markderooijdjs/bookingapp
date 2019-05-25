@@ -1,0 +1,116 @@
+@extends('layouts.app')
+
+@section('content')
+    <h3 class="page-title">Bookings</h3>
+    {!! Form::open(['method' => 'POST', 'route' => ['admin.appointments.store']]) !!}
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            @lang('quickadmin.qa_create')
+        </div>
+        
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-xs-12 form-group">
+					{!! Form::label('client_id', 'Client*', ['class' => 'control-label']) !!}
+                    <select id="client_id" name="client_id" class="form-control select2" required>
+						<option value="">Please select</option>
+						@foreach($clients as $client)
+						<option value="{{ $client->id }}" {{ (old("client_id") == $client->id ? "selected":"") }}>{{ $client->first_name }} {{ $client->last_name }}</option>
+						@endforeach
+					</select>
+                    <p class="help-block"></p>
+                    @if($errors->has('client_id'))
+                        <p class="help-block">
+                            {{ $errors->first('client_id') }}
+                        </p>
+                    @endif
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 form-group">
+                    {!! Form::label('service_id', 'Car*', ['class' => 'control-label']) !!}
+                    <select id="service_id" name="service_id" class="form-control select2" required>
+						<option value="">Please select</option>
+						@foreach($services as $service)
+							<option value="{{ $service->id }}" data-price="{{ $service->price }}" {{ (old("service_id") == $service->id ? "selected":"") }}>{{ $service->name }}</option>
+						@endforeach
+					</select>
+                    <p class="help-block"></p>
+                    @if($errors->has('service_id'))
+                        <p class="help-block">
+                            {{ $errors->first('service_id') }}
+                        </p>
+                    @endif
+					<input type="hidden" id="price" value="0">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 form-group">
+                    {!! Form::label('date', 'Date*', ['class' => 'control-label']) !!}
+                    {!! Form::text('date', old('date'), ['class' => 'form-control date', 'placeholder' => '', 'required' => '']) !!}
+                    <p class="help-block"></p>
+                    @if($errors->has('date'))
+                        <p class="help-block">
+                            {{ $errors->first('date') }}
+                        </p>
+                    @endif
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-xs-12 form-group">
+                    {!! Form::label('comments', 'Comments', ['class' => 'control-label']) !!}
+                    {!! Form::textarea('comments', old('comments'), ['class' => 'form-control ', 'placeholder' => '']) !!}
+                    <p class="help-block"></p>
+                    @if($errors->has('comments'))
+                        <p class="help-block">
+                            {{ $errors->first('comments') }}
+                        </p>
+                    @endif
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    {!! Form::submit(trans('quickadmin.qa_save'), ['class' => 'btn btn-danger']) !!}
+    {!! Form::close() !!}
+@stop
+
+@section('javascript')
+    @parent
+    <script src="{{ url('quickadmin/js') }}/timepicker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>    <script>
+        $('.datetime').datetimepicker({
+            autoclose: true,
+            dateFormat: "{{ config('app.date_format_js') }}",
+            timeFormat: "HH:mm:ss"
+        });
+    </script>
+	<script>
+	$('.date').datepicker({
+		autoclose: true,
+		dateFormat: "{{ config('app.date_format_js') }}"
+	}).datepicker("setDate", "0");
+    </script>
+	<script>
+		$("#service_id").on("change", function() {
+			$("#price").val($('option:selected', this).attr('data-price'));
+			var date = $("#date").val();
+			var service_id = $("#service_id").val();
+
+		});
+	
+		$("#date").change(function() {
+			var service_id = $("#service_id").val();
+			var date = $("#date").val();
+//			UpdateEmployees(service_id, date);
+		});
+		
+		
+		
+	</script>
+
+@stop
